@@ -1,0 +1,11 @@
+.log-in {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+}
+
+#homepage-button {
+    position: fixed;
+    top: 50px;
+    left: 10px;
+}
