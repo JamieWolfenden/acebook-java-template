@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+    <head>
+        <meta charset="UTF-8">
+        <title>Acebook - My Profile</title>
+        <link rel="stylesheet" href="/navbar.css" />
+    </head>
+    <body>
+        <div id="navbar-placeholder" th:replace="~{fragments/navbar :: navbar}"></div>
+
+        <div id="user-details">
+            <p th:text="${user.username}"></p>
+            <img th:src="@{${user.profilePicture}}" alt="Profile picture">
+        </div>
+<!--        <ul th:each="post: ${user.posts}">-->
+<!--            <li th:text="${post.content}" />-->
+<!--        </ul>-->
+    </body>
+</html>
