@@ -22,8 +22,17 @@
         <p><input type="submit" value="Submit" id="submitBtn" /> <input type="reset" value="Reset" /></p>
     </form>
 
+
     <ul th:each="post: ${posts}">
+        <img th:src="@{${post.user.profilePicture}}" style="max-width: 50px"/>
+
+        <li th:text="${post.user.username}"/>
         <li th:text="${post.content}" />
+        <li th:text="${post.date}"   />
+        <li th:text="${post.likeCount}"/>
+        <button>like</button>
+        <button>comment</button>
+
     </ul>
 
     <script>

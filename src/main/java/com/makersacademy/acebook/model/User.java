@@ -3,6 +3,8 @@ package com.makersacademy.acebook.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.Set;
+
 import static java.lang.Boolean.TRUE;
 
 @Data
@@ -14,6 +16,11 @@ public class User {
     private Long id;
     private String username;
     private boolean enabled;
+    private String profilePicture;
+
+
+    @OneToMany(mappedBy = "user")
+    private Set<Post> posts;
 
     public User() {
         this.enabled = TRUE;
@@ -22,6 +29,7 @@ public class User {
     public User(String username) {
         this.username = username;
         this.enabled = TRUE;
+        this.profilePicture = "/images/placeholder_pp.webp";
     }
 
     public User(String username, boolean enabled) {
