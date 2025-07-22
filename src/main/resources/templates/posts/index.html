@@ -15,7 +15,7 @@
     </div>
 
     <form action="#" th:action="@{/posts}" th:object="${post}" method="post">
-        <p>Content: <input type="text" th:field="*{content}" id="postContent" /></p>
+        <p>Content: <input type="text" th:field="*{content}" id="postContent" placeholder="What's on your mind?" /></p>
         <div th:if="${#fields.hasErrors('content')}" style="color:red;">
             <p th:errors="*{content}"></p>
         </div>
