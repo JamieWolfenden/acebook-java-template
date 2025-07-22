@@ -15,8 +15,11 @@
     </div>
 
     <form action="#" th:action="@{/posts}" th:object="${post}" method="post">
-        <p>Content: <input type="text" th:field="*{content}" /></p>
-        <p><input type="submit" value="Submit" /> <input type="reset" value="Reset" /></p>
+        <p>Content: <input type="text" th:field="*{content}" id="postContent" placeholder="What's on your mind?" /></p>
+        <div th:if="${#fields.hasErrors('content')}" style="color:red;">
+            <p th:errors="*{content}"></p>
+        </div>
+        <p><input type="submit" value="Submit" id="submitBtn" /> <input type="reset" value="Reset" /></p>
     </form>
 
 
@@ -32,8 +35,17 @@
 
     </ul>
 
+    <script>
+    const input = document.getElementById("postContent");
+    const submitBtn = document.getElementById("submitBtn");
 
+    function toggleButton() {
+        submitBtn.disabled = input.value.trim() === "";
+    }
 
+    input.addEventListener("input", toggleButton)
+    window.addEventListener("DOMContentLoaded", toggleButton)
+    </script>
 
     </body>
 </html>
