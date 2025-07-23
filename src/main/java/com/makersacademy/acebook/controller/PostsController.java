@@ -2,6 +2,7 @@ package com.makersacademy.acebook.controller;
 
 import com.makersacademy.acebook.model.Post;
 import com.makersacademy.acebook.model.User;
+//import com.makersacademy.acebook.repository.CommentsRepository;
 import com.makersacademy.acebook.repository.PostRepository;
 import com.makersacademy.acebook.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +24,12 @@ public class PostsController {
     PostRepository repository;
     @Autowired
     UserRepository userRepository;
+//    @Autowired
+//    CommentsRepository commentsRepository;
 
     @GetMapping("/posts")
     public String index(Model model) {
-        Iterable<Post> posts = repository.findAll();
+        Iterable<Post> posts = repository.findAllByOrderByIdDesc();
         model.addAttribute("posts", posts);
         model.addAttribute("post", new Post());
         return "posts/index";
@@ -59,6 +62,27 @@ public class PostsController {
         repository.save(post);
         return "redirect:/posts";
     }
+
+    @PostMapping("/posts/{id}")
+    public String likePost(@PathVariable Long id) {
+        Optional<Post> likedPost = repository.findById(id);
+        if (likedPost.isPresent()) {
+            System.out.println(likedPost);
+            Post post = likedPost.get();
+            post.setLikeCount(post.getLikeCount() + 1);
+            repository.save(post);
+        }
+        return "redirect:/posts";
+    }
+
+//    @GetMapping("/posts/{id}")
+//    public String viewPostAndComments(@PathVariable Long id, Model model) {
+//        Post post = repository.findById(id).orElseThrow();
+//        List<Comment> comments = commentsRepository.findByPost(post); // assuming this method exists
+//        model.addAttribute("post", post);
+//        model.addAttribute("comments", comments);
+//        return "post-comments"; // html template
+//    }
 
 //    @PostMapping("/posts")
 //    public RedirectView create(@ModelAttribute Post post) {

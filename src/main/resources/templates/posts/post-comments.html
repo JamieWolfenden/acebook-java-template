@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8" />
+  <title>Post Details</title>
+  <link rel="stylesheet" href="/main.css" />
+</head>
+<body>
+
+<div>
+  <h2 th:text="${post.content}">Post content here</h2>
+  <p>Posted by: <span th:text="${post.user.username}">Username</span></p>
+  <p>Date: <span th:text="${post.date}">Date</span></p>
+  <p>Likes: <span th:text="${post.likeCount}">0</span></p>
+</div>
+
+<hr />
+
+<h3>Comments</h3>
+<ul>
+  <li th:each="comment : ${comments}">
+    <strong th:text="${comment.user.username}">User</strong>:
+    <span th:text="${comment.commentContent}">Comment text</span>
+  </li>
+</ul>
+
+<a href="/" >Back to posts list</a>
+
+</body>
+</html>
