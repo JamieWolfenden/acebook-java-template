@@ -16,11 +16,11 @@
         <div id="user-posts">
             <h2>My Posts</h2>
 
-            <div th:if="${user.posts.size() == 0}">
+            <div th:if="${posts.size() == 0}">
                  <p>No Posts Yet.</p>
             </div>
 
-             <ul th:each="post: ${user.posts}">
+             <ul th:each="post: ${posts}">
                 <li>
                     <p th:text="${post.content}"></p>
                     <p><small th:text="${post.date}"></small></p>
