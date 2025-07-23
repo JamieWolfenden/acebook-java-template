@@ -3,10 +3,10 @@
     <head>
         <meta charset="UTF-8">
         <title>Acebook - My Profile</title>
-        <link rel="stylesheet" href="/navbar.css" />
+        <link rel="stylesheet" href="/navbar-sidebar.css" />
     </head>
     <body>
-        <div id="navbar-placeholder" th:replace="~{fragments/navbar :: navbar}"></div>
+        <div id="navbar-sidebar-placeholder" th:replace="~{fragments/navbar-sidebar :: navbar-sidebar}"></div>
 
         <div id="user-details">
             <p th:text="${user.username}"></p>
