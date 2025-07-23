@@ -1,6 +1,8 @@
 package com.makersacademy.acebook.controller;
 
+import com.makersacademy.acebook.model.Post;
 import com.makersacademy.acebook.model.User;
+import com.makersacademy.acebook.repository.PostRepository;
 import com.makersacademy.acebook.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -9,12 +11,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
 public class UsersController {
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    private PostRepository postRepository;
 
     @GetMapping("/users/after-login")
     public RedirectView afterLogin() {
@@ -42,7 +47,14 @@ public class UsersController {
 
         String username = (String) principal.getAttributes().get("email");
         Optional<User> user = userRepository.findUserByUsername(username);
-        user.ifPresent(value -> modelAndView.addObject("user", value));
+
+        if (user.isPresent()) {
+            User currentUser = user.get();
+            modelAndView.addObject("user", currentUser);
+
+            List<Post> posts = postRepository.findByUser(currentUser);
+            modelAndView.addObject("posts", posts);
+        }
 
         return modelAndView;
     }

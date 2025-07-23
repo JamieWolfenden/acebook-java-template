@@ -12,8 +12,21 @@
             <p th:text="${user.username}"></p>
             <img th:src="@{${user.profilePicture}}" alt="Profile picture">
         </div>
-<!--        <ul th:each="post: ${user.posts}">-->
-<!--            <li th:text="${post.content}" />-->
-<!--        </ul>-->
+
+        <div id="user-posts">
+            <h2>My Posts</h2>
+
+            <div th:if="${user.posts.size() == 0}">
+                 <p>No Posts Yet.</p>
+            </div>
+
+             <ul th:each="post: ${user.posts}">
+                <li>
+                    <p th:text="${post.content}"></p>
+                    <p><small th:text="${post.date}"></small></p>
+                    <p>Likes: <span th:text="${post.likeCount}"></span></p>
+                </li>
+            </ul>
+        </div>
     </body>
 </html>
