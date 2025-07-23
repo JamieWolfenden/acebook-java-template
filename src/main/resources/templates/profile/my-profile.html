@@ -1,32 +1,455 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
-    <head>
-        <meta charset="UTF-8">
-        <title>Acebook - My Profile</title>
-        <link rel="stylesheet" href="/navbar-sidebar.css" />
-    </head>
-    <body>
-        <div id="navbar-sidebar-placeholder" th:replace="~{fragments/navbar-sidebar :: navbar-sidebar}"></div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Acebook - My Profile</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/navbar-sidebar.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-        <div id="user-details">
-            <p th:text="${user.username}"></p>
-            <img th:src="@{${user.profilePicture}}" alt="Profile picture">
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            color: #1c1e21;
+        }
+
+        /* Top Header */
+        .top-header {
+            background-color: #1877f2;
+            height: 56px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .top-header .logo {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .top-header .search-box {
+            flex: 1;
+            max-width: 320px;
+            margin: 0 16px;
+        }
+
+        .top-header .search-box input {
+            width: 100%;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 20px;
+            background-color: #3a3b3c;
+            color: #e4e6ea;
+            font-size: 15px;
+        }
+
+        .top-header .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .top-header .user-actions button {
+            background: none;
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .top-header .user-actions button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Left Sidebar */
+        .left-sidebar {
+            position: fixed;
+            top: 56px;
+            left: 0;
+            width: 320px;
+            height: calc(100vh - 56px);
+            background-color: white;
+            overflow-y: auto;
+            padding: 16px 0;
+            border-right: 1px solid #dadde1;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            margin: 0 8px 16px 8px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #1c1e21;
+            font-weight: 600;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            margin-right: 12px;
+            object-fit: cover;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            color: #1c1e21;
+            text-decoration: none;
+            border-radius: 8px;
+            margin: 0 8px;
+            font-weight: 500;
+        }
+
+        .sidebar-item:hover {
+            background-color: #f2f3f4;
+        }
+
+        .sidebar-item.active {
+            background-color: #e3f2fd;
+            color: #1877f2;
+        }
+
+        .sidebar-item i {
+            width: 36px;
+            height: 36px;
+            background-color: #f0f2f5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            color: #1877f2;
+            font-size: 20px;
+        }
+
+        .sidebar-item.active i {
+            background-color: #1877f2;
+            color: white;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 320px;
+            margin-top: 56px;
+            min-height: calc(100vh - 56px);
+            padding: 20px;
+        }
+
+        .content-feed {
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        /* Profile Header */
+        .profile-header {
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .profile-cover {
+            height: 200px;
+            background: linear-gradient(135deg, #1877f2, #42b883);
+            position: relative;
+        }
+
+        .profile-info {
+            padding: 16px 24px 24px 24px;
+            text-align: center;
+            position: relative;
+        }
+
+        .profile-picture {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid white;
+            object-fit: cover;
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .profile-name {
+            margin-top: 60px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #1c1e21;
+            margin-bottom: 8px;
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #dadde1;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1877f2;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #65676b;
+        }
+
+        /* Posts Section */
+        .posts-section {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .posts-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #dadde1;
+        }
+
+        .posts-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1c1e21;
+            margin-bottom: 4px;
+        }
+
+        .posts-subtitle {
+            color: #65676b;
+            font-size: 14px;
+        }
+
+        .posts-content {
+            padding: 0;
+        }
+
+        .no-posts {
+            padding: 40px 24px;
+            text-align: center;
+            color: #65676b;
+        }
+
+        .no-posts i {
+            font-size: 48px;
+            color: #dadde1;
+            margin-bottom: 16px;
+        }
+
+        .user-post {
+            padding: 20px 24px;
+            border-bottom: 1px solid #f0f2f5;
+        }
+
+        .user-post:last-child {
+            border-bottom: none;
+        }
+
+        .post-content-text {
+            color: #1c1e21;
+            font-size: 16px;
+            line-height: 1.33;
+            margin-bottom: 12px;
+        }
+
+        .post-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #65676b;
+            font-size: 13px;
+        }
+
+        .post-date {
+            color: #65676b;
+        }
+
+        .post-likes {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .post-likes i {
+            color: #1877f2;
+        }
+
+        /* Mobile responsiveness */
+        @media screen and (max-width: 768px) {
+            .left-sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                z-index: 999;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 16px;
+            }
+
+            .top-header .search-box {
+                display: none;
+            }
+
+            .profile-cover {
+                height: 150px;
+            }
+
+            .profile-picture {
+                width: 100px;
+                height: 100px;
+                top: -50px;
+            }
+
+            .profile-name {
+                margin-top: 50px;
+                font-size: 24px;
+            }
+
+            .profile-stats {
+                gap: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Top Header -->
+<div class="top-header">
+    <form action="/" method="get" style="margin: 0;">
+        <button type="submit" class="logo" style="background: none; border: none; cursor: pointer;">
+            AceBook
+        </button>
+    </form>
+
+    <div class="search-box">
+        <input type="text" placeholder="Search AceBook">
+    </div>
+
+    <div class="user-actions">
+        <form th:action="@{/logout}" method="get" sec:authorize="isAuthenticated()" style="margin: 0;">
+            <button type="submit">
+                <i class="fas fa-sign-out-alt"></i> Log out
+            </button>
+        </form>
+
+        <form th:action="@{/signup}" method="get" sec:authorize="!isAuthenticated()" style="margin: 0;">
+            <button type="submit">
+                <i class="fas fa-sign-in-alt"></i> Log in or Sign up
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Left Sidebar -->
+<div class="left-sidebar">
+    <div sec:authorize="isAuthenticated()">
+        <form th:action="@{/profile/my-profile}" method="get" style="margin: 0;">
+            <button type="submit" class="user-profile" style="background: none; border: none; cursor: pointer; width: 100%; text-align: left;">
+                <img th:src="@{${user.profilePicture}}" alt="Profile picture" class="user-avatar" sec:authorize="isAuthenticated()">
+                <span th:text="${user.username}">Username</span>
+            </button>
+        </form>
+    </div>
+
+    <a href="/" class="sidebar-item">
+        <i class="fas fa-home"></i>
+        <span>News Feed</span>
+    </a>
+
+    <a href="/profile/my-profile" class="sidebar-item active">
+        <i class="fas fa-user"></i>
+        <span>Profile</span>
+    </a>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+    <div class="content-feed">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-cover"></div>
+            <div class="profile-info">
+                <img th:src="@{${user.profilePicture}}" alt="Profile picture" class="profile-picture">
+                <div class="profile-name" th:text="${user.username}">Username</div>
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" th:text="${posts.size()}">0</span>
+                        <span class="stat-label">Posts</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">42</span>
+                        <span class="stat-label">Friends</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">128</span>
+                        <span class="stat-label">Likes</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div id="user-posts">
-            <h2>My Posts</h2>
-
-            <div th:if="${posts.size() == 0}">
-                 <p>No Posts Yet.</p>
+        <!-- Posts Section -->
+        <div class="posts-section">
+            <div class="posts-header">
+                <div class="posts-title">My Posts</div>
+                <div class="posts-subtitle">All your posts in one place</div>
             </div>
 
-             <ul th:each="post: ${posts}">
-                <li>
-                    <p th:text="${post.content}"></p>
-                    <p><small th:text="${post.date}"></small></p>
-                    <p>Likes: <span th:text="${post.likeCount}"></span></p>
-                </li>
-            </ul>
+            <div class="posts-content">
+                <div th:if="${posts.size() == 0}" class="no-posts">
+                    <i class="fas fa-pen-alt"></i>
+                    <p>No Posts Yet.</p>
+                    <p style="margin-top: 8px; font-size: 14px;">Start sharing your thoughts with the world!</p>
+                </div>
+
+                <div th:each="post: ${posts}" class="user-post">
+                    <div class="post-content-text" th:text="${post.content}">Post content</div>
+                    <div class="post-meta">
+                        <span class="post-date" th:text="${post.date}">Date</span>
+                        <div class="post-likes">
+                            <i class="fas fa-heart"></i>
+                            <span th:text="${post.likeCount}">0</span>
+                            <span>likes</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </body>
+    </div>
+</div>
+
+</body>
 </html>
