@@ -1,0 +1,26 @@
+<div th:fragment="navbar-sidebar" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+    <div id="navbar">
+        <form th:action="@{/logout}" class="log-in" method="get" sec:authorize="isAuthenticated()">
+            <button type="submit">Log out</button>
+        </form>
+
+        <form th:action="@{/signup}" class="log-in" method="get" sec:authorize="!isAuthenticated()">
+            <button type="submit">Log in or Sign up</button>
+        </form>
+
+        <form th:action="@{/}" id="homepage-button" method="get">
+            <button type="submit">Homepage</button>
+        </form>
+
+        <div class="search-box">
+            <input type="text" placeholder="Search AceBook">
+        </div>
+    </div>
+
+    <aside id="sidebar">
+        <a id="picture-profile-button" th:href="@{/profile/my-profile}"><img th:src="@{${user.profilePicture}}" alt="Profile picture" style="height:20px;width:20px;"  sec:authorize="isAuthenticated()"></a>
+        <form th:action="@{/profile/my-profile}" id="username-profile-button" method="get" sec:authorize="isAuthenticated()">
+            <button type="submit" th:text="${user.username}"></button>
+        </form>
+    </aside>
+</div>

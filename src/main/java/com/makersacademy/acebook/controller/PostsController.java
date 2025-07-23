@@ -32,6 +32,16 @@ public class PostsController {
         Iterable<Post> posts = repository.findAllByOrderByIdDesc();
         model.addAttribute("posts", posts);
         model.addAttribute("post", new Post());
+
+        DefaultOidcUser principal = (DefaultOidcUser) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        String username = (String) principal.getAttributes().get("email");
+        Optional<User> user = userRepository.findUserByUsername(username);
+        user.ifPresent(value -> model.addAttribute("user", value));
+
         return "posts/index";
     }
 
@@ -57,7 +67,7 @@ public class PostsController {
         String username = (String) principal.getAttributes().get("email");
         Optional<User> user = userRepository.findUserByUsername(username);
 
-        post.setUser(user.get());
+        user.ifPresent(post::setUser);
 
         repository.save(post);
         return "redirect:/posts";
