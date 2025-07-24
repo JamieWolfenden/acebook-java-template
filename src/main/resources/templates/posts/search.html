@@ -253,20 +253,6 @@
             Signed in as <span sec:authentication="principal.attributes['email']"></span>
         </div>
 
-        <!-- Post Creation Form -->
-        <div class="post-composer">
-            <form action="#" th:action="@{/posts}" th:object="${post}" method="post">
-                <input type="text" th:field="*{content}" id="postContent" placeholder="What's on your mind?" />
-                <div th:if="${#fields.hasErrors('content')}" class="error-message">
-                    <p th:errors="*{content}"></p>
-                </div>
-                <div class="button-group">
-                    <input type="reset" value="Reset" />
-                    <input type="submit" value="Post" id="submitBtn" />
-                </div>
-            </form>
-        </div>
-
         <!-- Posts Feed -->
         <div th:each="post: ${posts}" class="post-card">
             <div class="post-header">
@@ -295,18 +281,6 @@
         </div>
     </div>
 </div>
-
-<script>
-    const input = document.getElementById("postContent");
-    const submitBtn = document.getElementById("submitBtn");
-
-    function toggleButton() {
-        submitBtn.disabled = input.value.trim() === "";
-    }
-
-    input.addEventListener("input", toggleButton);
-    window.addEventListener("DOMContentLoaded", toggleButton);
-</script>
 
 </body>
 </html>
