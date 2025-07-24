@@ -256,7 +256,9 @@
         <!-- Posts Feed -->
         <div th:each="post: ${posts}" class="post-card">
             <div class="post-header">
-                <img th:src="@{${post.user.profilePicture}}" class="user-avatar" alt="Profile picture">
+                <a th:href="@{/profile/{id}(id=${post.user.id})}">
+                    <img th:src="@{${post.user.profilePicture}}" class="user-avatar" alt="Profile picture">
+                </a>
                 <div>
                     <div class="post-author" th:text="${post.user.username}">Username</div>
                     <div class="post-time" th:text="${post.date}">Date</div>
@@ -270,13 +272,11 @@
                         <i class="far fa-thumbs-up"></i> Like
                     </button>
                 </form>
-                <button class="post-action">
-                    <i class="far fa-comment"></i> Comment
-                </button>
-
-                <button>
-                    <a th:href="@{/posts/{id}(id=${post.id})}">See Comments</a>
-                </button>
+                <form th:action="@{/posts/{id}(id=${post.id})}" method="get" style="flex: 1; margin: 0;">
+                    <button type="submit" class="post-action">
+                        <i class="far fa-comment"></i> Comment
+                    </button>
+                </form>
             </div>
         </div>
     </div>
