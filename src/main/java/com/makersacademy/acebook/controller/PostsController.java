@@ -14,14 +14,17 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
+import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
 public class PostsController {
 
     @Autowired
-    PostRepository repository;
+    PostRepository postsRepository;
     @Autowired
     UserRepository userRepository;
     @Autowired
@@ -29,7 +32,7 @@ public class PostsController {
 
     @GetMapping("/posts")
     public String index(Model model) {
-        Iterable<Post> posts = repository.findAllByOrderByIdDesc();
+        Iterable<Post> posts = postsRepository.findAllByOrderByIdDesc();
         model.addAttribute("posts", posts);
         model.addAttribute("post", new Post());
 
@@ -47,7 +50,7 @@ public class PostsController {
     ) {
         if (result.hasErrors()) {
             // Return to form and display existing posts + error
-            Iterable<Post> posts = repository.findAll();
+            Iterable<Post> posts = postsRepository.findAll();
             model.addAttribute("posts", posts);
             model.addAttribute("errorMessage", "Post content cannot be empty.");
             return "posts/index"; // error page
@@ -57,13 +60,13 @@ public class PostsController {
 
         user.ifPresent(post::setUser);
 
-        repository.save(post);
+        postsRepository.save(post);
         return "redirect:/posts";
     }
 
     @PostMapping("/posts/{id}")
     public String likePost(@PathVariable Long id) {
-        Optional<Post> likedPost = repository.findById(id);
+        Optional<Post> likedPost = postsRepository.findById(id);
 
         if (likedPost.isPresent()) {
             Optional<User> currentUser = getCurrentUser();
@@ -88,7 +91,7 @@ public class PostsController {
 
     @GetMapping("/posts/{id}")
     public String viewPostAndComments(@PathVariable Long id, Model model) {
-        Post post = repository.findById(id).orElseThrow();
+        Post post = postsRepository.findById(id).orElseThrow();
         Iterable<Comment> comments = commentsRepository.findByPost(post); // assuming this method exists
         model.addAttribute("post", post);
         model.addAttribute("comments", comments);
@@ -97,8 +100,6 @@ public class PostsController {
         return "posts/post-comments"; // html template
     }
 
-    @Autowired
-    PostRepository postsRepository;
     @PostMapping("/posts/{id}/comments")
     public String addComment(@PathVariable Long id, @ModelAttribute("comment") Comment comment) {
         Post post = postsRepository.findById(id).orElseThrow();
@@ -112,8 +113,28 @@ public class PostsController {
         commentsRepository.save(comment);
         return "redirect:/posts/" + id;
     }
+
+    @GetMapping("/posts/search")
+    public ModelAndView searchPosts(@ModelAttribute("q") String searchedText) {
+        ModelAndView modelAndView = new ModelAndView("/posts/search");
+
+        List<Post> allPosts = postsRepository.findAll();
+        ArrayList<Post> matchingPosts = new ArrayList<>();
+
+        for (Post post : allPosts) {
+            if (post.getContent().toLowerCase().contains(searchedText.toLowerCase())) {
+                matchingPosts.add(post);
+            }
+        }
+
+        modelAndView.addObject("posts", matchingPosts);
+        Optional<User> user = getCurrentUser();
+        user.ifPresent(value -> modelAndView.addObject("user", value));
+
+        return modelAndView;
+    }
   
-      public Optional<User> getCurrentUser() {
+    public Optional<User> getCurrentUser() {
         DefaultOidcUser principal = (DefaultOidcUser) SecurityContextHolder
                 .getContext()
                 .getAuthentication()
