@@ -1,44 +1,243 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
   <meta charset="UTF-8" />
-  <title>Post Details</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Acebook - Comments</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link rel="stylesheet" href="/navbar-sidebar.css" />
   <link rel="stylesheet" href="/main.css" />
+
+  <style>
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f0f2f5;
+      color: #1c1e21;
+      padding-left: 320px; /* for sidebar */
+      padding-top: 56px;   /* for header */
+      min-height: 100vh;
+    }
+
+    .content-feed {
+      max-width: 680px;
+      margin: 20px auto 40px auto;
+      background: white;
+      border-radius: 8px;
+      padding: 24px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .post-content-header h2 {
+      font-weight: 600;
+      font-size: 24px;
+      margin-bottom: 8px;
+      color: #1c1e21;
+    }
+
+    .post-meta p {
+      font-size: 14px;
+      color: #65676b;
+      margin-bottom: 4px;
+    }
+
+    form {
+      margin-top: 24px;
+    }
+
+    form p {
+      margin-bottom: 12px;
+    }
+
+    form input[type="text"] {
+      width: 100%;
+      font-size: 16px;
+      padding: 12px 16px;
+      border-radius: 20px;
+      border: none;
+      background: #f0f2f5;
+      color: #1c1e21;
+      font-family: inherit;
+    }
+
+    form input[type="text"]:focus {
+      outline: none;
+      background-color: #e4e6ea;
+    }
+
+    form input[type="submit"],
+    form input[type="reset"] {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 15px;
+      margin-right: 8px;
+    }
+
+    form input[type="submit"] {
+      background-color: #1877f2;
+      color: white;
+    }
+
+    form input[type="submit"]:hover:not(:disabled) {
+      background-color: #166fe5;
+    }
+
+    form input[type="reset"] {
+      background-color: #e4e6ea;
+      color: #4b4f56;
+    }
+
+    .comments-list {
+      margin-top: 32px;
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .comments-list li {
+      padding: 12px 16px;
+      background: #f0f2f5;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+
+    .comments-list li strong {
+      font-weight: 600;
+      color: #1c1e21;
+    }
+
+    .comments-list li p {
+      font-size: 13px;
+      color: #65676b;
+      margin-top: 6px;
+      margin-bottom: 0;
+    }
+
+    .comments-heading {
+      font-size: 20px;
+      font-weight: 600;
+      color: #1c1e21;
+      margin-top: 40px;
+      margin-bottom: 16px;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 24px;
+      color: #1877f2;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
 
-<div>
-  <h2 th:text="${post.content}">Post content here</h2>
-  <p>Posted by: <span th:text="${post.user.username}">Username</span></p>
-  <p>Date: <span th:text="${post.date}">Date</span></p>
-  <p>Likes: <span th:text="${post.likeCount}">0</span></p>
+<!-- Top Header -->
+<div class="top-header">
+  <form action="/" method="get" style="margin: 0;">
+    <button type="submit" class="logo" style="background: none; border: none; cursor: pointer;">
+      AceBook
+    </button>
+  </form>
+
+  <div class="search-box">
+    <input type="text" placeholder="Search AceBook" />
+  </div>
+
+  <div class="user-actions">
+    <form th:action="@{/logout}" method="get" sec:authorize="isAuthenticated()" style="margin: 0;">
+      <button type="submit">
+        <i class="fas fa-sign-out-alt"></i> Log out
+      </button>
+    </form>
+
+    <form th:action="@{/signup}" method="get" sec:authorize="!isAuthenticated()" style="margin: 0;">
+      <button type="submit">
+        <i class="fas fa-sign-in-alt"></i> Log in or Sign up
+      </button>
+    </form>
+  </div>
 </div>
 
-<hr />
-
-<form th:action="@{/posts/{id}/comments(id=${post.id})}" th:object="${comment}" method="post">
-  <p>Content:
-    <input type="text" th:field="*{commentContent}" id="postContent" placeholder="Leave your comments here ..." />
-
-  </p>
-  <div th:if="${#fields.hasErrors('commentContent')}" style="color:red;">
-    <p th:errors="*{commentContent}"></p>
+<!-- Left Sidebar -->
+<div class="left-sidebar">
+  <div sec:authorize="isAuthenticated()">
+    <form th:action="@{/profile/my-profile}" method="get" style="margin: 0;">
+      <button
+              type="submit"
+              class="user-profile"
+              style="background: none; border: none; cursor: pointer; width: 100%; text-align: left;"
+      >
+        <img th:src="@{${user.profilePicture}}" alt="Profile picture" class="user-avatar" sec:authorize="isAuthenticated()" />
+        <span th:text="${user.username}">Username</span>
+      </button>
+    </form>
   </div>
-  <p><input type="submit" value="Submit" id="submitBtn" /> <input type="reset" value="Reset" /></p>
-</form>
 
+  <a href="/" class="sidebar-item">
+    <i class="fas fa-home"></i>
+    <span>News Feed</span>
+  </a>
 
+  <a href="/profile/my-profile" class="sidebar-item active">
+    <i class="fas fa-user"></i>
+    <span>Profile</span>
+  </a>
+</div>
 
-<h3>Comments</h3>
-<ul>
-  <li th:each="comment : ${comments}">
-    <strong th:text="${comment.user != null ? comment.user.username : 'Unknown User'}">User</strong>:
-    <span th:text="${comment.commentContent}">Comment text</span>
-    <p th:text="${comment.timeAgo}">Time ago</p>
-  </li>
-</ul>
+<!-- Main Content -->
+<div class="content-feed">
 
-<a href="/" >Back to posts list</a>
+  <div class="post-content-header">
+    <h2 th:text="${post.content}">Post content here</h2>
+    <div class="post-meta">
+      <p>Posted by: <span th:text="${post.user.username}">Username</span></p>
+      <p>Date: <span th:text="${post.date}">Date</span></p>
+      <p>Likes: <span th:text="${post.likeCount}">0</span></p>
+    </div>
+  </div>
+
+  <hr />
+
+  <form th:action="@{/posts/{id}/comments(id=${post.id})}" th:object="${comment}" method="post">
+    <p>
+      <input type="text" th:field="*{commentContent}" id="postContent" placeholder="Leave your comments here ..." />
+    </p>
+    <div th:if="${#fields.hasErrors('commentContent')}" style="color:red;">
+      <p th:errors="*{commentContent}"></p>
+    </div>
+    <p>
+      <input type="submit" value="Submit" id="submitBtn" />
+      <input type="reset" value="Reset" />
+    </p>
+  </form>
+
+  <h3 class="comments-heading">Comments</h3>
+
+  <ul class="comments-list">
+    <li th:each="comment : ${comments}">
+      <strong th:text="${comment.user != null ? comment.user.username : 'Unknown User'}">User</strong>:
+      <span th:text="${comment.commentContent}">Comment text</span>
+      <p th:text="${comment.timeAgo}">Time ago</p>
+    </li>
+  </ul>
+
+  <a href="/" class="back-link">← Back to posts list</a>
+
+</div>
 
 </body>
 </html>

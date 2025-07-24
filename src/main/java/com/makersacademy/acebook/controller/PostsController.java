@@ -96,7 +96,9 @@ public class PostsController {
         model.addAttribute("post", post);
         model.addAttribute("comments", comments);
         model.addAttribute("comment", new Comment());
+        model.addAttribute("user", getCurrentUser().get());
         System.out.println(model);
+
         return "posts/post-comments"; // html template
     }
 
@@ -142,5 +144,7 @@ public class PostsController {
 
         String username = (String) principal.getAttributes().get("email");
         return userRepository.findUserByUsername(username);
+
+
     }
 }
