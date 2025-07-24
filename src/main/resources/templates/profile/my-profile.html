@@ -193,7 +193,9 @@
     </form>
 
     <div class="search-box">
-        <input type="text" placeholder="Search AceBook">
+        <form th:action="@{/posts/search}" method="get">
+            <input type="text" placeholder="Search AceBook" th:value="${q}" name="q">
+        </form>
     </div>
 
     <div class="user-actions">
