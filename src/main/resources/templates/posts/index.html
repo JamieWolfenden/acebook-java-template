@@ -37,7 +37,10 @@
         <form th:action="@{/posts/{id}(id=${post.id})}" method="post">
             <button type="submit">Like</button>
         </form>
-        <button>comment</button>
+
+        <button>
+            <a th:href="@{/posts/{id}(id=${post.id})}">See Comments</a>
+        </button>
 
     </ul>
 

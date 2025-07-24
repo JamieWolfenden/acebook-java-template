@@ -22,6 +22,9 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<Post> posts;
 
+    @OneToMany(mappedBy = "user")
+    private Set<Comment> comments;
+
     public User() {
         this.enabled = TRUE;
     }

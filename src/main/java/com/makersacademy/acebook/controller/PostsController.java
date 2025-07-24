@@ -1,8 +1,9 @@
 package com.makersacademy.acebook.controller;
 
+import com.makersacademy.acebook.model.Comment;
 import com.makersacademy.acebook.model.Post;
 import com.makersacademy.acebook.model.User;
-//import com.makersacademy.acebook.repository.CommentsRepository;
+import com.makersacademy.acebook.repository.CommentRepository;
 import com.makersacademy.acebook.repository.PostRepository;
 import com.makersacademy.acebook.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,8 @@ public class PostsController {
     PostRepository repository;
     @Autowired
     UserRepository userRepository;
-//    @Autowired
-//    CommentsRepository commentsRepository;
+    @Autowired
+    CommentRepository commentsRepository;
 
     @GetMapping("/posts")
     public String index(Model model) {
@@ -75,18 +76,32 @@ public class PostsController {
         return "redirect:/posts";
     }
 
-//    @GetMapping("/posts/{id}")
-//    public String viewPostAndComments(@PathVariable Long id, Model model) {
-//        Post post = repository.findById(id).orElseThrow();
-//        List<Comment> comments = commentsRepository.findByPost(post); // assuming this method exists
-//        model.addAttribute("post", post);
-//        model.addAttribute("comments", comments);
-//        return "post-comments"; // html template
-//    }
 
-//    @PostMapping("/posts")
-//    public RedirectView create(@ModelAttribute Post post) {
-//        repository.save(post);
-//        return new RedirectView("/posts");
-//    }
+    @GetMapping("/posts/{id}")
+    public String viewPostAndComments(@PathVariable Long id, Model model) {
+        Post post = repository.findById(id).orElseThrow();
+        Iterable<Comment> comments = commentsRepository.findByPost(post); // assuming this method exists
+        model.addAttribute("post", post);
+        model.addAttribute("comments", comments);
+        model.addAttribute("comment", new Comment());
+        System.out.println(model);
+        return "posts/post-comments"; // html template
+    }
+
+    @Autowired
+    PostRepository postsRepository;
+    @PostMapping("/posts/{id}/comments")
+    public String addComment(@PathVariable Long id, @ModelAttribute("comment") Comment comment) {
+        Post post = postsRepository.findById(id).orElseThrow();
+        DefaultOidcUser principal = (DefaultOidcUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = (String) principal.getAttributes().get("email");
+        User user = userRepository.findUserByUsername(username).orElseThrow();
+
+        comment.setPost(post);
+        comment.setUser(user);
+        comment.setId(null);// added in as per error re. no user set
+        commentsRepository.save(comment);
+        return "redirect:/posts/" + id;
+    }
+
 }
