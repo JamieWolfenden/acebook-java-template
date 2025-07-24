@@ -58,4 +58,31 @@ public class UsersController {
 
         return modelAndView;
     }
+
+    @GetMapping("/profile/{id}")
+    public ModelAndView viewProfile(@PathVariable Long id) {
+        ModelAndView modelAndView = new ModelAndView("/profile/other-profile");
+
+        Optional<User> otherUser = userRepository.findById(id);
+
+        if (otherUser.isPresent()) {
+            User viewedUser = otherUser.get();
+            modelAndView.addObject("viewedUser", viewedUser);
+
+            List<Post> posts = postRepository.findByUser(viewedUser);
+            modelAndView.addObject("posts", posts);
+        }
+
+        DefaultOidcUser principal = (DefaultOidcUser) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        String username = (String) principal.getAttributes().get("email");
+        Optional<User> user = userRepository.findUserByUsername(username);
+
+        user.ifPresent(currentUser -> modelAndView.addObject("user", currentUser));
+
+        return modelAndView;
+    }
 }

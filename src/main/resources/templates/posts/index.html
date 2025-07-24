@@ -268,7 +268,9 @@
         <!-- Posts Feed -->
         <div th:each="post: ${posts}" class="post-card">
             <div class="post-header">
-                <img th:src="@{${post.user.profilePicture}}" class="user-avatar" alt="Profile picture">
+                <a th:href="@{/profile/{id}(id=${post.user.id})}">
+                    <img th:src="@{${post.user.profilePicture}}" class="user-avatar" alt="Profile picture">
+                </a>
                 <div>
                     <div class="post-author" th:text="${post.user.username}">Username</div>
                     <div class="post-time" th:text="${post.date}">Date</div>
