@@ -1,0 +1,134 @@
+/* Top Header */
+.top-header {
+    background-color: #1877f2;
+    height: 56px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.top-header .logo {
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.top-header .search-box {
+    flex: 1;
+    max-width: 320px;
+    margin: 0 16px;
+}
+
+.top-header .search-box input {
+    width: 100%;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 20px;
+    background-color: #3a3b3c;
+    color: #e4e6ea;
+    font-size: 15px;
+}
+
+.top-header .user-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.top-header .user-actions button {
+    background: none;
+    border: none;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.top-header .user-actions button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Left Sidebar */
+.left-sidebar {
+    position: fixed;
+    top: 56px;
+    left: 0;
+    width: 320px;
+    height: calc(100vh - 56px);
+    background-color: white;
+    overflow-y: auto;
+    padding: 16px 0;
+    border-right: 1px solid #dadde1;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    margin: 0 8px 16px 8px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #1c1e21;
+    font-weight: 600;
+}
+
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    margin-right: 12px;
+    object-fit: cover;
+}
+
+.sidebar-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    color: #1c1e21;
+    text-decoration: none;
+    border-radius: 8px;
+    margin: 0 8px;
+    font-weight: 500;
+}
+
+.sidebar-item:hover {
+    background-color: #f2f3f4;
+}
+
+.sidebar-item i {
+    width: 36px;
+    height: 36px;
+    background-color: #f0f2f5;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    color: #1877f2;
+    font-size: 20px;
+}
+}
+
+#sidebar {
+    #picture-profile-button {
+        position: fixed;
+        top: 50px;
+        left: 10px;
+        max-width: 50px;
+    }
+
+    #username-profile-button {
+        position: fixed;
+        top: 70px;
+        left: 10px;
+    }
+}
