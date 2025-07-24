@@ -16,11 +16,25 @@
 
 <hr />
 
+<form th:action="@{/posts/{id}/comments(id=${post.id})}" th:object="${comment}" method="post">
+  <p>Content:
+    <input type="text" th:field="*{commentContent}" id="postContent" placeholder="Leave your comments here ..." />
+
+  </p>
+  <div th:if="${#fields.hasErrors('commentContent')}" style="color:red;">
+    <p th:errors="*{commentContent}"></p>
+  </div>
+  <p><input type="submit" value="Submit" id="submitBtn" /> <input type="reset" value="Reset" /></p>
+</form>
+
+
+
 <h3>Comments</h3>
 <ul>
   <li th:each="comment : ${comments}">
-    <strong th:text="${comment.user.username}">User</strong>:
+    <strong th:text="${comment.user != null ? comment.user.username : 'Unknown User'}">User</strong>:
     <span th:text="${comment.commentContent}">Comment text</span>
+    <p th:text="${comment.timeAgo}">Time ago</p>
   </li>
 </ul>
 

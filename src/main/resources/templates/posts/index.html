@@ -234,6 +234,10 @@
                 <span th:text="${user.username}">Username</span>
             </button>
         </form>
+
+        <button>
+            <a th:href="@{/posts/{id}(id=${post.id})}">See Comments</a>
+        </button>
     </div>
 
     <a href="/" class="sidebar-item">

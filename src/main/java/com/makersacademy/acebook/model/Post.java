@@ -6,6 +6,7 @@ import jakarta.validation.constraints.*; // Imports NotBlank
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 @Entity
@@ -25,6 +26,8 @@ public class Post {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @OneToMany(mappedBy = "post")
+    private Set<Comment> comments;
 
     public Post() {}
 
