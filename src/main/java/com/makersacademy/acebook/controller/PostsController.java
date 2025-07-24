@@ -113,7 +113,7 @@ public class PostsController {
         return "redirect:/posts/" + id;
     }
   
-      public Optional<User> getCurrentUser() {
+    public Optional<User> getCurrentUser() {
         DefaultOidcUser principal = (DefaultOidcUser) SecurityContextHolder
                 .getContext()
                 .getAuthentication()
