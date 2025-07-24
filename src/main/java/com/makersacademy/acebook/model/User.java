@@ -1,13 +1,15 @@
 package com.makersacademy.acebook.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Set;
 
 import static java.lang.Boolean.TRUE;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "USERS")
 public class User {
@@ -21,6 +23,13 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private Set<Post> posts;
+
+    @ManyToMany
+    @JoinTable(
+            name = "likes",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "post_id"))
+    private Set<Post> likedPosts;
 
     public User() {
         this.enabled = TRUE;

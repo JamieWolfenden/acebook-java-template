@@ -35,7 +35,7 @@
         <li th:text="${post.likeCount}"/>
 <!--        <button>like</button>-->
         <form th:action="@{/posts/{id}(id=${post.id})}" method="post">
-            <button type="submit">Like</button>
+            <button type="submit" th:disabled="${user.likedPosts.contains(post)}">Like</button>
         </form>
         <button>comment</button>
     </ul>
