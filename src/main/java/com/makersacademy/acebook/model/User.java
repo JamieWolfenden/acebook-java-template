@@ -31,6 +31,9 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "post_id"))
     private Set<Post> likedPosts;
 
+    @OneToMany(mappedBy = "user")
+    private Set<Comment> comments;
+
     public User() {
         this.enabled = TRUE;
     }

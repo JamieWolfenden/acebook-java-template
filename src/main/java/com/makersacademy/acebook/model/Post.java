@@ -31,6 +31,9 @@ public class Post {
     @ManyToMany(mappedBy = "likedPosts")
     private Set<User> likes;
 
+    @OneToMany(mappedBy = "post")
+    private Set<Comment> comments;
+
     public Post() {}
 
     public Post(String content, LocalDate date, Integer likeCount) {
