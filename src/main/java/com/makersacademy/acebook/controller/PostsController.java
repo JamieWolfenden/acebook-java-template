@@ -15,7 +15,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -34,13 +33,7 @@ public class PostsController {
         model.addAttribute("posts", posts);
         model.addAttribute("post", new Post());
 
-        DefaultOidcUser principal = (DefaultOidcUser) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
-
-        String username = (String) principal.getAttributes().get("email");
-        Optional<User> user = userRepository.findUserByUsername(username);
+        Optional<User> user = getCurrentUser();
         user.ifPresent(value -> model.addAttribute("user", value));
 
         return "posts/index";
@@ -59,14 +52,8 @@ public class PostsController {
             model.addAttribute("errorMessage", "Post content cannot be empty.");
             return "posts/index"; // error page
         }
-        
-        DefaultOidcUser principal = (DefaultOidcUser) SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
 
-        String username = (String) principal.getAttributes().get("email");
-        Optional<User> user = userRepository.findUserByUsername(username);
+        Optional<User> user = getCurrentUser();
 
         user.ifPresent(post::setUser);
 
@@ -77,15 +64,27 @@ public class PostsController {
     @PostMapping("/posts/{id}")
     public String likePost(@PathVariable Long id) {
         Optional<Post> likedPost = repository.findById(id);
+
         if (likedPost.isPresent()) {
-            System.out.println(likedPost);
-            Post post = likedPost.get();
-            post.setLikeCount(post.getLikeCount() + 1);
-            repository.save(post);
+            Optional<User> currentUser = getCurrentUser();
+
+            if (currentUser.isPresent()) {
+                User user = currentUser.get();
+                Post post = likedPost.get();
+
+                // Check if user has already liked the post
+                if (!user.getLikedPosts().contains(post)) {
+                    post.setLikeCount(post.getLikeCount() + 1);
+
+                    post.getLikes().add(user);
+                    user.getLikedPosts().add(post);
+                    userRepository.save(user);
+                }
+            }
         }
+
         return "redirect:/posts";
     }
-
 
     @GetMapping("/posts/{id}")
     public String viewPostAndComments(@PathVariable Long id, Model model) {
@@ -113,5 +112,14 @@ public class PostsController {
         commentsRepository.save(comment);
         return "redirect:/posts/" + id;
     }
+  
+      public Optional<User> getCurrentUser() {
+        DefaultOidcUser principal = (DefaultOidcUser) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
 
+        String username = (String) principal.getAttributes().get("email");
+        return userRepository.findUserByUsername(username);
+    }
 }

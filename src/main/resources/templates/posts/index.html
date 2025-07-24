@@ -282,7 +282,7 @@
             <div class="like-count" th:text="${post.likeCount} + ' likes'">0 likes</div>
             <div class="post-actions">
                 <form th:action="@{/posts/{id}(id=${post.id})}" method="post" style="flex: 1; margin: 0;">
-                    <button type="submit" class="post-action">
+                    <button type="submit" class="post-action" th:disabled="${user.likedPosts.contains(post)}">
                         <i class="far fa-thumbs-up"></i> Like
                     </button>
                 </form>

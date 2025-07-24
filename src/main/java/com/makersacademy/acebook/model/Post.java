@@ -3,12 +3,14 @@ package com.makersacademy.acebook.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*; // Imports NotBlank
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "POSTS")
 public class Post {
@@ -25,6 +27,9 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @ManyToMany(mappedBy = "likedPosts")
+    private Set<User> likes;
 
     @OneToMany(mappedBy = "post")
     private Set<Comment> comments;
