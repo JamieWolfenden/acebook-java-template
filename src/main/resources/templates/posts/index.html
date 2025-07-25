@@ -266,6 +266,7 @@
                     <p th:errors="*{content}"></p>
                 </div>
                 <div class="button-group">
+                    <input type="file" name="image" th:value="image" accept="image/*"/>
                     <input type="reset" value="Reset" />
                     <input type="submit" value="Post" id="submitBtn" />
                 </div>

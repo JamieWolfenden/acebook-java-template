@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ public class PostsController {
         Iterable<Post> posts = postsRepository.findAllByOrderByIdDesc();
         model.addAttribute("posts", posts);
         model.addAttribute("post", new Post());
+//        model.addAttribute("image", "");
 
         Optional<User> user = getCurrentUser();
         user.ifPresent(value -> model.addAttribute("user", value));
@@ -45,6 +47,7 @@ public class PostsController {
     @PostMapping("/posts")
     public String create(
             @Valid @ModelAttribute("post") Post post, // Triggers Validation
+            @RequestParam("image") MultipartFile image,
             BindingResult result, // Hold Error
             Model model // Used to pass data back to view
     ) {
