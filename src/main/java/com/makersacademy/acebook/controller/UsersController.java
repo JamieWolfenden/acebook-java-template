@@ -54,6 +54,14 @@ public class UsersController {
 
             List<Post> posts = postRepository.findByUser(currentUser);
             modelAndView.addObject("posts", posts);
+
+            int totalLikes = 0;
+
+            for (Post post : posts) {
+                totalLikes += post.getLikeCount();
+            }
+
+            modelAndView.addObject("totalLikes", totalLikes);
         }
 
         return modelAndView;
@@ -71,6 +79,14 @@ public class UsersController {
 
             List<Post> posts = postRepository.findByUser(viewedUser);
             modelAndView.addObject("posts", posts);
+
+            int totalLikes = 0;
+
+            for (Post post : posts) {
+                totalLikes += post.getLikeCount();
+            }
+
+            modelAndView.addObject("totalLikes", totalLikes);
         }
 
         DefaultOidcUser principal = (DefaultOidcUser) SecurityContextHolder
