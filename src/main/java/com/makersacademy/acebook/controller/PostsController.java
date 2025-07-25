@@ -66,9 +66,11 @@ public class PostsController {
 
         user.ifPresent(post::setUser);
 
-        Path filePath = Path.of(System.getProperty("user.dir") + "/src/main/resources/static/images/posts/" + imageFile.getOriginalFilename());
-        Files.write(filePath, imageFile.getBytes());
-        post.setImage(filePath.toString());
+        if (!imageFile.isEmpty()) {
+            Path filePath = Path.of(System.getProperty("user.dir") + "/src/main/resources/static/images/posts/" + imageFile.getOriginalFilename());
+            Files.write(filePath, imageFile.getBytes());
+            post.setImage(filePath.toString());
+        }
 
         postsRepository.save(post);
         return "redirect:/posts";
