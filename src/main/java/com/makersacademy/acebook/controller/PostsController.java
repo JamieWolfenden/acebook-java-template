@@ -17,6 +17,9 @@ import jakarta.validation.Valid;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -47,10 +50,10 @@ public class PostsController {
     @PostMapping("/posts")
     public String create(
             @Valid @ModelAttribute("post") Post post, // Triggers Validation
-            @RequestParam("image") MultipartFile image,
+            @RequestParam("imageFile") MultipartFile imageFile,
             BindingResult result, // Hold Error
             Model model // Used to pass data back to view
-    ) {
+    ) throws IOException {
         if (result.hasErrors()) {
             // Return to form and display existing posts + error
             Iterable<Post> posts = postsRepository.findAll();
@@ -62,6 +65,10 @@ public class PostsController {
         Optional<User> user = getCurrentUser();
 
         user.ifPresent(post::setUser);
+
+        Path filePath = Path.of(System.getProperty("user.dir") + "/src/main/resources/static/images/posts/" + imageFile.getOriginalFilename());
+        Files.write(filePath, imageFile.getBytes());
+        post.setImage(filePath.toString());
 
         postsRepository.save(post);
         return "redirect:/posts";
