@@ -10,4 +10,5 @@ dependency-reduced-pom.xml
 .project
 .settings/
 **/application.yml
+/src/main/resources/static/images/posts
 

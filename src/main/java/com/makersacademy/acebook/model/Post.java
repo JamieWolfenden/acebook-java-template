@@ -23,6 +23,7 @@ public class Post {
     private String content;
     private LocalDate date = LocalDate.now(); //today's date yyyy/mm/dd
     private Integer likeCount = 0; //defaults to 0
+    private String image;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

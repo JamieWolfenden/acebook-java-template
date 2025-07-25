@@ -85,7 +85,8 @@
         }
 
         .post-composer input[type="submit"],
-        .post-composer input[type="reset"] {
+        .post-composer input[type="reset"],
+        .post-composer input[type="file"] {
             padding: 8px 16px;
             border: none;
             border-radius: 6px;
@@ -109,7 +110,8 @@
             cursor: not-allowed;
         }
 
-        .post-composer input[type="reset"] {
+        .post-composer input[type="reset"],
+        .post-composer input[type="file"] {
             background-color: #e4e6ea;
             color: #4b4f56;
         }
@@ -261,12 +263,13 @@
 
         <!-- Post Creation Form -->
         <div class="post-composer">
-            <form action="#" th:action="@{/posts}" th:object="${post}" method="post">
+            <form action="#" th:action="@{/posts}" th:object="${post}" method="post" enctype="multipart/form-data">
                 <input type="text" th:field="*{content}" id="postContent" placeholder="What's on your mind?" />
                 <div th:if="${#fields.hasErrors('content')}" class="error-message">
                     <p th:errors="*{content}"></p>
                 </div>
                 <div class="button-group">
+                    <input type="file" name="imageFile" th:value="${imageFile}" accept="image/*"/>
                     <input type="reset" value="Reset" />
                     <input type="submit" value="Post" id="submitBtn" />
                 </div>
