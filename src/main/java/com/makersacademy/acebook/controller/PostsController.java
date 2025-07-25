@@ -64,6 +64,13 @@ public class PostsController {
         return "redirect:/posts";
     }
 
+    @PostMapping("/posts/delete/{id}")
+    public String deletePost(@PathVariable Long id) {
+        postsRepository.deleteById(id);
+
+        return "redirect:/profile/my-profile";
+    }
+
     @PostMapping("/posts/{id}")
     public String likePost(@PathVariable Long id) {
         Optional<Post> likedPost = postsRepository.findById(id);
